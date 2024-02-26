@@ -1,6 +1,7 @@
 import { For, createEffect, createSignal } from "solid-js";
 import { Forecast } from "../utils/weather";
 import { range } from "../utils/range";
+import { computeOffset, daysOfWeek } from "../utils/date";
 
 const buttonClass = "px-3 py-1 rounded shadow bg-purple-600 hover:bg-purple-700 focus:outline-1 focus:outline-black font-bold text-white"
 
@@ -36,7 +37,7 @@ export default function Scrubber(props: { forecasts: Forecast[] }) {
     return <div class="flex flex-col gap-2 max-h-screen mx-auto">
         {props.forecasts.length ? <div class={`grid justify-items-center ${classes[show()]}`}>
             <For each={Array.from(range(index(), index() + show()))}>
-                {(add) => <img class="flex-shrink" src={props.forecasts[index() + add].url} />}
+                {(add) => <img class="flex-shrink" src={props.forecasts[add].url} />}
             </For>
         </div>
             : null}
@@ -57,6 +58,11 @@ export default function Scrubber(props: { forecasts: Forecast[] }) {
                     <option value="21">Week</option>
                 </select>
             </label>
+        </div>
+        <div class="flex flex-col justify-center">
+            <For each={daysOfWeek}>
+                {day => <a class="text-blue-500 underline text-center" href={"#" + day} onClick={() => setIndex(computeOffset(day, props.forecasts[0].forecast))}>{day}</a>}
+            </For>
         </div>
     </div>
 

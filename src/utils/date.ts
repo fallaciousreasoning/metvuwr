@@ -1,4 +1,4 @@
-const daysOfWeek = [
+export const daysOfWeek = [
     "Sunday",
     "Monday",
     "Tuesday",
@@ -15,4 +15,20 @@ export const getDate = (forecast: string) => {
     const hours = forecast.slice(8, 10)
 
     return new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hours)))
+}
+
+const hoursPerForecast = 6
+
+const second = 1000
+const minute = 60 * second
+const hour = 60 * minute
+
+export const computeOffset = (day: string, forecast: string) => {
+    const index = daysOfWeek.indexOf(day)
+
+    const forecastDate = getDate(forecast).getTime()
+    let offset = 1
+    while (new Date(forecastDate + offset * hoursPerForecast * hour).getDay() != index)
+        ++offset
+    return offset - 1
 }

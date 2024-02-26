@@ -18,7 +18,8 @@ const getMostRecentForecastTime = async () => {
 
 export interface Forecast {
     hours: number,
-    url: string
+    url: string,
+    forecast: string
 }
 
 export async function* getForecastImages() {
@@ -27,8 +28,6 @@ export async function* getForecastImages() {
         alert('failed to fetch forecast!')
         throw new Error('failed to fetch forecast!')
     }
-
-    console.log(getDate(mostRecentForecast))
 
     for (const hour of range(6, 240, 6)) {
         yield {
