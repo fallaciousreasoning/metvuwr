@@ -1,3 +1,4 @@
+import { getDate } from "./date"
 import { fetchCors } from "./fetch"
 import { range } from "./range"
 
@@ -27,9 +28,12 @@ export async function* getForecastImages() {
         throw new Error('failed to fetch forecast!')
     }
 
+    console.log(getDate(mostRecentForecast))
+
     for (const hour of range(6, 240, 6)) {
         yield {
             hours: hour,
+            forecast: mostRecentForecast,
             url: getForecastUrl(hour, mostRecentForecast)
         } as Forecast
     }
