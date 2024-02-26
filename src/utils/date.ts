@@ -17,6 +17,16 @@ export const getDate = (forecast: string) => {
     return new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hours)))
 }
 
+export const getDaysFromToday = (forecast: string) => {
+    const days = [...daysOfWeek]
+    let dayOfWeek = getDate(forecast).getDay()
+    while (dayOfWeek > 0) {
+        days.push(days.shift()!)
+        dayOfWeek--
+    }
+    return days
+}
+
 const hoursPerForecast = 6
 
 const second = 1000

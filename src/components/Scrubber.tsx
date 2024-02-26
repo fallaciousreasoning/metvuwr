@@ -1,7 +1,7 @@
-import { For, createEffect, createSignal } from "solid-js";
+import { For, createEffect, createMemo, createSignal } from "solid-js";
 import { Forecast } from "../utils/weather";
 import { range } from "../utils/range";
-import { computeOffset, daysOfWeek } from "../utils/date";
+import { computeOffset, daysOfWeek, getDate, getDaysFromToday } from "../utils/date";
 
 const buttonClass = "px-3 py-1 rounded shadow bg-purple-600 hover:bg-purple-700 focus:outline-1 focus:outline-black font-bold text-white"
 
@@ -34,6 +34,8 @@ export default function Scrubber(props: { forecasts: Forecast[] }) {
         }
     })
 
+    const firstDate = createMemo(() => props.forecasts[0]?.forecast)
+
     return <div class="flex flex-col gap-2 max-h-screen mx-auto">
         {props.forecasts.length ? <div class={`grid justify-items-center ${classes[show()]}`}>
             <For each={Array.from(range(index(), index() + show()))}>
@@ -59,11 +61,11 @@ export default function Scrubber(props: { forecasts: Forecast[] }) {
                 </select>
             </label>
         </div>
-        <div class="flex flex-col justify-center">
-            <For each={daysOfWeek}>
-                {day => <a class="text-blue-500 underline text-center" href={"#" + day} onClick={() => setIndex(computeOffset(day, props.forecasts[0].forecast))}>{day}</a>}
+        {firstDate() && <div class="flex flex-col justify-center">
+            <For each={getDaysFromToday(firstDate())}>
+                {day => <a class="text-blue-500 underline text-center" href={"#" + day} onClick={() => setIndex(computeOffset(day, firstDate()))}>{day}</a>}
             </For>
-        </div>
+        </div>}
     </div>
 
 }
