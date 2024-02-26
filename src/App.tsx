@@ -1,12 +1,18 @@
-import type { Component } from 'solid-js';
+import { For, type Component, createSignal } from 'solid-js';
+import { Forecast, getForecastImages } from './utils/weather';
+import { toArray } from './utils/range';
+import { createStore } from "solid-js/store";
 
-import logo from './logo.svg';
+const [forecast, setForecast] = createStore<Forecast[]>([])
+toArray(getForecastImages()).then(setForecast)
 
 const App: Component = () => {
-  return (
-    <div class="bg-black w-5 h-5">
-    </div>
-  );
+  const [hour, setHour] = createSignal(6)
+  return <div>
+    <For each={forecast}>
+      {(item) => <img src={item.url} />}
+    </For>
+  </div>
 };
 
 export default App;
