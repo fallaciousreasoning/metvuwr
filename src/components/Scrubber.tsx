@@ -7,15 +7,15 @@ const buttonClass = "px-3 py-1 rounded shadow bg-purple-600 hover:bg-purple-700 
 
 const classes: { [key: number]: string } = {
     1: 'grid-cols-1',
-    3: 'grid-cols-3',
-    21: 'grid-cols-3 grid-rows-7'
+    4: 'grid-cols-4',
+    28: 'grid-cols-4 grid-rows-7'
 }
 
 export default function Scrubber(props: { forecasts: Forecast[] }) {
     const [index, setIndex] = createSignal(0)
     const [show, setShow] = createSignal(1)
     const step = (delta: number) => {
-        let next = index() + delta
+        let next = index() + delta * show()
         while (next < 0) next += props.forecasts.length
         while (next >= props.forecasts.length) next -= props.forecasts.length
         setIndex(next)
@@ -39,7 +39,7 @@ export default function Scrubber(props: { forecasts: Forecast[] }) {
     return <div class="flex flex-col gap-2 max-h-screen mx-auto">
         {props.forecasts.length ? <div class={`grid justify-items-center ${classes[show()]}`}>
             <For each={Array.from(range(index(), index() + show()))}>
-                {(add) => <img class="flex-shrink" src={props.forecasts[add].url} />}
+                {(add) => add < props.forecasts.length && <img class="flex-shrink" src={props.forecasts[add].url} />}
             </For>
         </div>
             : null}
@@ -56,8 +56,8 @@ export default function Scrubber(props: { forecasts: Forecast[] }) {
                 Show:
                 <select value={show()} onChange={e => setShow(parseInt(e.target.value))}>
                     <option value="1">Single</option>
-                    <option value="3">Day</option>
-                    <option value="21">Week</option>
+                    <option value="4">Day</option>
+                    <option value="28">Week</option>
                 </select>
             </label>
         </div>
