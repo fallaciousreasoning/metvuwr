@@ -1,10 +1,18 @@
-import { createEffect, createSignal } from "solid-js";
+import { For, createEffect, createSignal } from "solid-js";
 import { Forecast } from "../utils/weather";
+import { range } from "../utils/range";
 
 const buttonClass = "px-3 py-1 rounded shadow bg-purple-600 hover:bg-purple-700 focus:outline-1 focus:outline-black font-bold text-white"
 
+const classes: { [key: number]: string } = {
+    1: 'grid-cols-1',
+    3: 'grid-cols-3',
+    21: 'grid-cols-3 grid-rows-7'
+}
+
 export default function Scrubber(props: { forecasts: Forecast[] }) {
     const [index, setIndex] = createSignal(0)
+    const [show, setShow] = createSignal(1)
     const step = (delta: number) => {
         let next = index() + delta
         while (next < 0) next += props.forecasts.length
@@ -25,8 +33,12 @@ export default function Scrubber(props: { forecasts: Forecast[] }) {
         }
     })
 
-    return <div class="flex flex-col gap-2 max-h-screen mx-auto" style={{ "max-width": '700px' }}>
-        {props.forecasts.length ? <img src={props.forecasts[index()].url} />
+    return <div class="flex flex-col gap-2 max-h-screen mx-auto">
+        {props.forecasts.length ? <div class={`grid justify-items-center ${classes[show()]}`}>
+            <For each={Array.from(range(index(), index() + show()))}>
+                {(add) => <img class="flex-shrink" src={props.forecasts[index() + add].url} />}
+            </For>
+        </div>
             : null}
         <div class="flex flex-row justify-center gap-5">
             <button class={buttonClass} onClick={() => step(-1)}>
@@ -35,6 +47,16 @@ export default function Scrubber(props: { forecasts: Forecast[] }) {
             <button class={buttonClass} onClick={() => step(1)}>
                 &gt;
             </button>
+        </div>
+        <div class="flex flex-row justify-center">
+            <label class="flex flex-row gap-1">
+                Show:
+                <select value={show()} onChange={e => setShow(parseInt(e.target.value))}>
+                    <option value="1">Single</option>
+                    <option value="3">Day</option>
+                    <option value="21">Week</option>
+                </select>
+            </label>
         </div>
     </div>
 
