@@ -11,6 +11,8 @@ const classes: { [key: number]: string } = {
     28: 'grid-cols-4 grid-rows-7'
 }
 
+const [imgHeight, setImgHeight] = createSignal(0)
+
 export default function Scrubber(props: { forecasts: Forecast[] }) {
     const [index, setIndex] = createSignal(0)
     const [show, setShow] = createSignal(1)
@@ -34,12 +36,18 @@ export default function Scrubber(props: { forecasts: Forecast[] }) {
         }
     })
 
+    createEffect(() => {
+        // When show changes, we should reset the min height
+        show()
+        setImgHeight(0)
+    })
+
     const firstDate = createMemo(() => props.forecasts[0]?.forecast)
 
     return <div class="flex flex-col gap-2 max-h-screen mx-auto">
         {props.forecasts.length ? <div class={`grid justify-items-center ${classes[show()]}`}>
             <For each={Array.from(range(index(), index() + show()))}>
-                {(add) => add < props.forecasts.length && <img class="flex-shrink" src={props.forecasts[add].url} />}
+                {(add) => add < props.forecasts.length && <img class="flex-shrink" src={props.forecasts[add].url} style={`min-height: ${imgHeight()}px`} onLoad={e => !imgHeight() && setImgHeight(e.target.clientHeight)}  />}
             </For>
         </div>
             : null}
