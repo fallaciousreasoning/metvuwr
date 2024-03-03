@@ -1,7 +1,7 @@
 import { For, createEffect, createMemo, createSignal } from "solid-js";
-import { Forecast } from "../utils/weather";
+import { Forecast } from "../../types/forecast";
+import { computeOffset, getDaysFromToday } from "../utils/date";
 import { range } from "../utils/range";
-import { computeOffset, daysOfWeek, getDate, getDaysFromToday } from "../utils/date";
 
 const buttonClass = "px-3 py-1 rounded shadow bg-purple-600 hover:bg-purple-700 focus:outline-1 focus:outline-black font-bold text-white"
 
@@ -13,13 +13,13 @@ const classes: { [key: number]: string } = {
 
 const [imgHeight, setImgHeight] = createSignal(0)
 
-export default function Scrubber(props: { forecasts: Forecast[] }) {
+export default function Scrubber(props: { forecast: Forecast }) {
     const [index, setIndex] = createSignal(0)
     const [show, setShow] = createSignal(1)
     const step = (delta: number) => {
         let next = index() + delta * show()
-        while (next < 0) next += props.forecasts.length
-        while (next >= props.forecasts.length) next -= props.forecasts.length
+        while (next < 0) next += props.forecast.predictions.length
+        while (next >= props.forecast.predictions.length) next -= props.forecast.predictions.length
         setIndex(next)
     }
 
@@ -42,12 +42,12 @@ export default function Scrubber(props: { forecasts: Forecast[] }) {
         setImgHeight(0)
     })
 
-    const firstDate = createMemo(() => props.forecasts[0]?.forecast)
+    const firstDate = createMemo(() => props.forecast.forecastTime)
 
     return <div class="flex flex-col gap-2 max-h-screen mx-auto">
-        {props.forecasts.length ? <div class={`grid justify-items-center ${classes[show()]}`}>
+        {props.forecast.predictions.length ? <div class={`grid justify-items-center ${classes[show()]}`}>
             <For each={Array.from(range(index(), index() + show()))}>
-                {(add) => add < props.forecasts.length && <img class="flex-shrink" src={props.forecasts[add].url} style={`min-height: ${imgHeight()}px`} onLoad={e => !imgHeight() && setImgHeight(e.target.clientHeight)}  />}
+                {(add) => add < props.forecast.predictions.length && <img class="flex-shrink" src={props.forecast.predictions[add].url} style={`min-height: ${imgHeight()}px`} onLoad={e => !imgHeight() && setImgHeight(e.target.clientHeight)} />}
             </For>
         </div>
             : null}

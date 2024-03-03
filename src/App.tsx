@@ -1,20 +1,22 @@
 import { For, type Component, createSignal } from 'solid-js';
-import { Forecast, getForecastImages } from './utils/weather';
+import { getForecast } from './utils/weather';
 import { toArray } from './utils/range';
 import { createStore } from "solid-js/store";
 import Scrubber from './components/Scrubber';
+import { Forecast } from '../types/forecast';
 
-const [forecast, setForecast] = createStore<Forecast[]>([])
-toArray(getForecastImages()).then(forecast => {
+const [forecast, setForecast] = createSignal<Forecast>()
+getForecast().then(forecast => {
   setForecast(forecast)
 
-  // preload images, to make navigating more seamless
-  for (const fc of forecast)
-    fetch(fc.url, { mode: 'no-cors' })
+  for (const pred of forecast.predictions)
+    fetch(pred.url, { mode: 'no-cors', cache: 'force-cache' })
 })
 
 const App: Component = () => {
-  return<Scrubber forecasts={forecast} />
+  return <>
+    {forecast() && <Scrubber forecast={forecast()!} />}
+  </>
 };
 
 export default App;
