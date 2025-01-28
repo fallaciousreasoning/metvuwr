@@ -9,7 +9,9 @@ const getForecastUrl = (hour: number, forecast: string) => {
 }
 
 const getMostRecentForecastTime = async () => {
-    const text = await fetch('https://metvuw.com/forecast/forecast.php?type=rain&region=nzsi&noofdays=1').then(r => r.text())
+    const text = await fetch('https://metvuw.com/forecast/forecast.php?type=rain&region=nzsi&noofdays=1', {
+        cache: 'no-cache'
+    }).then(r => r.text())
     const { window: { document } } = new JSDOM(text, { contentType: 'text/html' })
     const img = document.querySelector('img[src*=rain]')
     return img?.getAttribute('src')?.split('/')[1]
