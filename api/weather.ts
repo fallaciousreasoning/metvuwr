@@ -5,7 +5,7 @@ import { JSDOM } from 'jsdom'
 const pad = (n: number, digits: number) => n.toString().padStart(digits, '0')
 
 const getForecastUrl = (hour: number, forecast: string) => {
-    return `https://www.metvuw.com/forecast/${forecast}/rain-nzsi-${forecast}-${pad(hour, 3)}.png`
+    return `https://www.metvuw.com/forecast/${forecast}/rain-nzsi-${forecast}-${pad(hour, 3)}.gif`
 }
 
 const getMostRecentForecastTime = async () => {
