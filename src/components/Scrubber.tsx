@@ -11,6 +11,13 @@ const classes: { [key: number]: string } = {
     28: 'grid-cols-4 grid-rows-7'
 }
 
+// On super small screens we just want to show a column of tiles
+const classesMd: { [key: number]: string } = {
+    1: 'grid-cols-1',
+    4: 'grid-cols-1',
+    28: 'grid-cols-1'
+}
+
 const [imgHeight, setImgHeight] = createSignal(0)
 
 export default function Scrubber(props: { forecast: Forecast }) {
@@ -45,7 +52,7 @@ export default function Scrubber(props: { forecast: Forecast }) {
     const firstDate = createMemo(() => props.forecast.forecastTime)
 
     return <div class="flex flex-col gap-2 max-h-screen mx-auto">
-        {props.forecast.predictions.length ? <div class={`grid justify-items-center ${classes[show()]}`}>
+        {props.forecast.predictions.length ? <div class={`grid justify-items-center ${classes[show()]} md:${classesMd[show()]}`}>
             <For each={Array.from(range(index(), index() + show()))}>
                 {(add) => add < props.forecast.predictions.length && <img class="flex-shrink" src={props.forecast.predictions[add].url} style={`min-height: ${imgHeight()}px`} onLoad={e => !imgHeight() && setImgHeight(e.target.clientHeight)} />}
             </For>
